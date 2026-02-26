@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ProductDTO } from "~/types/api/product";
 import { formatPrice } from "~/utils/formatters";
+import FavoriteIcon from "~/assets/icons/favorite-icon.svg";
 
 const { product } = defineProps<{ product: ProductDTO }>();
 
@@ -18,6 +19,9 @@ const priceSplit = computed(() => {
 <template>
   <NuxtLink class="product" to="/">
     <div class="product__picture">
+      <button class="product__favorite-btn" :aria-label="`Добавить ${product.name} в избранное`">
+        <FavoriteIcon class="product__favorite-btn--icon" />
+      </button>
       <picture>
         <img
           loading="lazy"
@@ -105,6 +109,23 @@ const priceSplit = computed(() => {
   &__name {
     font-size: pxToRem(16);
     font-weight: 400;
+  }
+
+  &__favorite-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: pxToRem(10);
+    border: none;
+    font-size: pxToRem(24);
+    z-index: 1;
+    background-color: transparent;
+
+    @include mixins.screensFrom("md") {
+      font-size: pxToRem(20);
+      padding: pxToRem(4);
+    }
   }
 }
 </style>
