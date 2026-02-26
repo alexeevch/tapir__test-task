@@ -18,18 +18,14 @@ const priceSplit = computed(() => {
 
 <template>
   <NuxtLink class="product" to="/">
-    <div class="product__picture">
-      <button class="product__favorite-btn" :aria-label="`Добавить ${product.name} в избранное`">
-        <FavoriteIcon class="product__favorite-btn--icon" />
-      </button>
-      <picture>
-        <img
-          loading="lazy"
-          :src="product?.image ? product.image : ''"
-          :alt="`Фото товара ${product.name}`"
-        />
-      </picture>
-    </div>
+    <picture class="product__picture">
+      <img
+        class="product__picture-img"
+        loading="lazy"
+        :src="product?.image ? product.image : ''"
+        :alt="`Фото товара ${product.name}`"
+      />
+    </picture>
     <div class="product__content">
       <div class="product__price">
         <span class="product__price-total">{{ price }}</span>
@@ -39,6 +35,9 @@ const priceSplit = computed(() => {
         {{ product.name }}
       </h3>
     </div>
+    <button class="product__favorite" :aria-label="`Добавить ${product.name} в избранное`">
+      <FavoriteIcon class="product__favorite-icon" />
+    </button>
   </NuxtLink>
 </template>
 
@@ -46,6 +45,7 @@ const priceSplit = computed(() => {
 @use "~/assets/styles/mixins" as mixins;
 
 .product {
+  position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -54,17 +54,11 @@ const priceSplit = computed(() => {
     height: pxToRem(180);
     width: 100%;
     position: relative;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
 
-    & picture {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    & img {
+    &-img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
@@ -111,7 +105,7 @@ const priceSplit = computed(() => {
     font-weight: 400;
   }
 
-  &__favorite-btn {
+  &__favorite {
     position: absolute;
     top: 0;
     right: 0;
