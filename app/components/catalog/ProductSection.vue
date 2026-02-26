@@ -24,21 +24,17 @@ const buttonText = computed(() => {
   return "Показать еще";
 });
 
-async function fetchProducts(query?: ApiPaginatorQueryDTO): Promise<ProductCollectionDTO> {
-  return $fetch<ProductCollectionDTO>("/products", {
-    baseURL,
-    query: {
-      page: query?.page || 1,
-      limit: query?.limit || 12
-    }
-  });
-}
-
-const { data: initialData } = await useAsyncData("products", () => fetchProducts());
+const { data: initialData, error: initialError } = await useAsyncData("products", () =>
+  fetchProducts()
+);
 
 if (initialData.value) {
   products.value = initialData.value.products;
   hasMore.value = initialData.value.currentPage < initialData.value.totalPages;
+}
+
+if (initialError.value) {
+  errorMessage.value = "Произошла ошибка, попробуйте позже";
 }
 
 /*
@@ -49,26 +45,38 @@ if (initialData.value) {
 В реальности, я бы дернул ручку из стора внутри useAsyncData и отрисовал товары из хранилища
 без костылей с initialData и прочего.
  */
-const loadMoreProducts = async () => {
-  if (isLoading.value || !hasMore.value) return;
-
+async function loadMoreProducts() {
   try {
-    isLoading.value = true;
     currentPage.value++;
-
     const response = await fetchProducts({ page: currentPage.value });
 
     products.value = [...products.value, ...response.products];
     hasMore.value = response.currentPage < response.totalPages;
+  } catch {
+    currentPage.value--;
+  }
+}
+
+async function fetchProducts(query?: ApiPaginatorQueryDTO): Promise<ProductCollectionDTO> {
+  try {
+    isLoading.value = true;
     errorMessage.value = null;
+
+    return await $fetch<ProductCollectionDTO>("/products", {
+      baseURL,
+      query: {
+        page: query?.page || 1,
+        limit: query?.limit || 12
+      }
+    });
   } catch (e) {
     console.error(e);
-    currentPage.value--;
     errorMessage.value = "Произошла ошибка, попробуйте позже";
+    throw e;
   } finally {
     isLoading.value = false;
   }
-};
+}
 </script>
 
 <template>
