@@ -12,7 +12,7 @@ const price = computed(() => {
 const priceSplit = computed(() => {
   const MULTIPLIER = 2;
 
-  return `${formatPrice(Math.floor(product.price / MULTIPLIER))} x ${MULTIPLIER}`;
+  return `${formatPrice(Math.round(product.price / MULTIPLIER))} x ${MULTIPLIER}`;
 });
 </script>
 
